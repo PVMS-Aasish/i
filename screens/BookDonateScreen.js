@@ -27,8 +27,11 @@ renderItem=({item})=>{
         <View style={{borderBottomWidth:2}}>
         <Text>{"bookId"+item.book_name}</Text>
         <Text>{"reasonToRequest"+item.reason_to_request}</Text>
-        <TouchableOpacity style={styles.button}>
-            <Text style={{color:'blue'}}> Donate </Text>
+        <TouchableOpacity style={styles.button}
+        onPress={()=>{
+            this.props.navigation.navigate("recieverDetails",{"details":item})
+        }}>
+            <Text style={{color:'blue'}}> View </Text>
         </TouchableOpacity>
         </View>
         
