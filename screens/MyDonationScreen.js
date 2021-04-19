@@ -28,6 +28,47 @@ constructor(){
       });
     })
   }
+
+  sendBook=(bookDetails)=>{
+    if(bookDetails.request_status === "Book Sent"){
+      var requestStatus = "Donor Interested"
+      db.collection("all_donations").doc(bookDetails.doc_id).update({
+        "request_status" : "Donor Interested"
+      })
+      this.sendNotification(bookDetails,requestStatus)
+    }
+    else{
+      var requestStatus = "Book Sent"
+      db.collection("all_donations").doc(bookDetails.doc_id).update({
+        "request_status" : "Book Sent"
+      })
+      this.sendNotification(bookDetails,requestStatus)
+    }
+  }
+  sendNotification=(bookDetails,requestStatus)=>{ 
+    var requestId = bookDetails.request_id
+    var donorId = bookDetails.donor_id
+    db.collection("all_notifications")
+    .where("request_id","==", requestId)
+    .where("donor_id","==",donorId)
+    .get()
+    .then((snapshot)=>{
+      snapshot.forEach((doc) => {
+        var message = ""
+        if(requestStatus === "Book Sent"){
+          message = this.state.donorName + " sent you book"
+        }else{
+           message =  this.state.donorName  + " has shown interest in donating the book"
+        }
+        db.collection("all_notifications").doc(doc.id).update({
+          "message": message,
+          "notification_status" : "unread",
+          "date"                : firebase.firestore.FieldValue.serverTimestamp()
+        })
+      });
+    })
+  }
+
 keyExtractor = (item, index) => index.toString()
 renderItem=({item,i})=>{
     return(
@@ -35,11 +76,21 @@ renderItem=({item,i})=>{
             <Icon name="book" type="font-awesome" color ='#696969'/>
             <Text style={{fontWeight: 'bold'}}>{item.book_name}</Text>
             <Text>{"\n Requested By: "+ item.requested_by +"\n Status:"+ item.request_statu }</Text> 
-            <TouchableOpacity style={styles.button}>
-            <Text style={{color:'#ffff', fontSize:12}}>Send Book</Text> 
+            <TouchableOpacity style={[
+              styles.button,
+              {
+                backgroundColor : item.request_status === "Book Sent" ? "green" : "#ff5722"
+              }
+            ]}
+            onPress = {()=>{
+              this.sendBook(item)
+            }}>
+            <Text style={{color:'#ffff'}}>{
+               item.request_status === "Book Sent" ? "Book Sent" : "Send Book"
+             }</Text>
             </TouchableOpacity>
         </View>
-    )
+    ) 
 }
 componentDidMount(){
      this.getAllDonations()   
