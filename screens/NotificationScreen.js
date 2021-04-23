@@ -3,6 +3,7 @@ import { StyleSheet, View, FlatList,Text } from 'react-native';
 import { ListItem, Icon } from 'react-native-elements';
 import firebase from 'firebase';
 import MyHeader from '../components/MyHeader';
+import SwipeableFlatlist from "../components/SwipeableFlatlist";
 import db from '../config';
 export default class NotificationScreen extends Component{
     constructor(props) {
@@ -53,7 +54,7 @@ export default class NotificationScreen extends Component{
         )
    }
       render(){
-        return(
+        return( 
           <View style={styles.container}>
             <View style={{flex:0.1}}>
               <MyHeader title={"Notifications"} navigation={this.props.navigation}/>
@@ -67,11 +68,7 @@ export default class NotificationScreen extends Component{
                   </View>
                 )
                 :(
-                  <FlatList
-                    keyExtractor={this.keyExtractor}
-                    data={this.state.allNotifications}
-                    renderItem={this.renderItem}
-                  />
+                  <SwipeableFlatlist allNotifications={this.state.allNotifications} />   
                 )
               }
             </View>
