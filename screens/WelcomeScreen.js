@@ -102,7 +102,8 @@ onPress={()=>this.setState({'isModalVisible':false})}>
          lastName:this.state.lastName,
           contact:this.state.contact,
            emailId:this.state.emailId,
-           address:this.state.address
+           address:this.state.address,
+           IsBookRequestActive: false
       })
       return Alert.alert(
         'User Added Successfully',
